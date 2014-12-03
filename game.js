@@ -103,7 +103,7 @@ var render = function () {
 	ctx.font = "24px Helvetica";
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
-	ctx.fillText("Wissenschaftler caught: " + monstersCaught, 32, 32);
+	ctx.fillText("Bio-Plaz killed: " + monstersCaught, 32, 32);
 };
 
 // The main game loop

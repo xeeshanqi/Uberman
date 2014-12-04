@@ -4,6 +4,12 @@ var ctx = canvas.getContext("2d");
 canvas.width = 512;
 canvas.height = 480;
 document.body.appendChild(canvas);
+var globalID = {};
+
+canvas.addEventListener('click', function(event) {
+  reset();
+  main();
+}, false);
 
 // Background image
 var bgReady = false;
@@ -35,6 +41,9 @@ var hero = {
 };
 var monster = {};
 var monstersCaught = 0;
+
+var timer = {};
+timer = 1;
 
 // Handle keyboard controls
 var keysDown = {};
@@ -71,7 +80,7 @@ var update = function (modifier) {
 	if (39 in keysDown) { // Player holding right
 		hero.x += hero.speed * modifier;
 	}
-
+	
 	// Are they touching?
 	if (
 		hero.x <= (monster.x + 32)
@@ -104,27 +113,51 @@ var render = function () {
 	ctx.textAlign = "left";
 	ctx.textBaseline = "top";
 	ctx.fillText("Bio-Plaz killed: " + monstersCaught, 32, 32);
+	
+	
+	ctx.fillStyle = "rgb(250, 250, 250)";
+	ctx.font = "24px Helvetica";
+	ctx.textAlign = "left";
+	ctx.textBaseline = "bottom";
+	ctx.fillText("Time: " + Math.floor(timer), 32, 32);
 };
 
 // The main game loop
 var main = function () {
 	var now = Date.now();
 	var delta = now - then;
-
+	
+	timer += delta/1000;	
+	
 	update(delta / 1000);
 	render();
 
 	then = now;
-
+   
 	// Request to do this again ASAP
-	requestAnimationFrame(main);
+	globalID = requestAnimationFrame(main);
+	
+	if(Math.floor(timer) >= 10)
+	{
+		cancelAnimationFrame(globalID);
+		timer = 0;
+		monstersCaught = 0;
+		var x = canvas.width / 2;
+		var y = canvas.height / 2;
+
+		ctx.fillStyle = "rgb(250, 250, 250)";
+		ctx.font = "34px Helvetica";
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		ctx.fillText(" GAME OVER !!! ", x, y);
+	}
 };
 
 // Cross-browser support for requestAnimationFrame
 var w = window;
 requestAnimationFrame = w.requestAnimationFrame || w.webkitRequestAnimationFrame || w.msRequestAnimationFrame || w.mozRequestAnimationFrame;
 
-// Let's play this game!
 var then = Date.now();
+
 reset();
 main();
